@@ -1,4 +1,4 @@
-from typing import Tuple, Set
+from typing import Tuple, Set, NoReturn
 from collections import OrderedDict
 from dataclasses import dataclass
 
@@ -29,21 +29,23 @@ class ApiCallList():
 
         return self._sequence[i] 
 
-    def _set_sequence(self):
+    def _set_sequence(self) -> NoReturn:
         self._sequence = [ self._data.get(k) for k in self._data ]
 
     def _merge(self, x: ApiCallItem, y: ApiCallItem) -> ApiCallItem:
         details = set(x.details)
         details.update(y.details) 
 
-        return ApiCallItem(
+        item = ApiCallItem(
             indices=x.indices + y.indices,
             host=x.host,
             path=x.path,
             details=frozenset(details)
         )
 
-    def append(self, item: ApiCallItem) -> None:
+        return item
+
+    def append(self, item: ApiCallItem) -> NoReturn:
         if isinstance(item, ApiCallItem):
             key = item.host + item.path
             if key in self._data:

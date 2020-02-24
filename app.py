@@ -4,8 +4,8 @@ from har.parser import HarParser
 from oas.writer import OasWriter
 
 
-LS_FF = 'sources/ls-ff.har'
-AMAZON = 'sources/amazon.har'
+LS_FF = 'sources.local/ls-ff.har'
+AMAZON = 'sources.local/amazon.har'
 
 
 if __name__ == '__main__':
