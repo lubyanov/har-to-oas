@@ -22,6 +22,7 @@ from vars import (
 class HarValidator():
 
     def _is_data_valid(self) -> bool:
+        # TODO: implement validation
         return True
 
     def _is_api_method(self, header: dict) -> bool:
@@ -63,19 +64,49 @@ class HarEntryParserMixin():
 
 
 class HarParser(HarValidator, HarEntryParserMixin):
+    """
+    HarParser class helps to convert data to special ApiCallList object
+
+    Class gets dictionary represented in HAR format to convert to special
+    data-transfer object, which has better structure to next processing
+    """
 
     def __init__(self, data: dict):
-        if not data:
+        """
+        Initializes object with HAR data
+
+        Args:
+            data: dictionary object with HAR data
+
+        Raises:
+            ValueError: raises if data is empty or not dict object
+        """
+        if not data or not isinstance(data, dict):
             raise ValueError
         self._data = data
 
     def parse(self) -> ApiCallList:
+        """
+        Parses inner HAR data to ApiCallList data structure
+
+        Returns:
+            ApiCallList - collection of HAR items
+        """
         items = self._get_api_call_item_list()
         ac_list = self._get_api_call_list(items)
 
         return ac_list
 
     def _get_api_call_list(self, items: List[ApiCallItem]) -> ApiCallList:
+        """
+        Collects separated ApiCallItems to collection represented by ApiCallList
+
+        Args:
+            items: list of ApiCallItems
+
+        Returns:
+            ApiCallList - collection of HAR items
+        """
         ac_list = ApiCallList()
         for item in items:
             ac_list.append(item)
@@ -83,6 +114,15 @@ class HarParser(HarValidator, HarEntryParserMixin):
         return ac_list
 
     def _get_api_call_item_list(self) -> List[ApiCallItem]:
+        """
+        Gets HAR entries and convert to list of separate ApiCallItem collection
+
+        Raises:
+            ValueError - raises if data is not valid HAR data
+
+        Returns:
+            list: - list of separate ApiCallItem
+        """
         result = []
         if self._is_data_valid():
             entries = self._data.get(LOG).get(ENTRIES)
