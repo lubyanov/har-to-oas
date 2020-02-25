@@ -1,7 +1,7 @@
 from collections import namedtuple
 from urllib.parse import urlparse
 from models.api_calls import ApiCallItem, ApiCallDetail, ApiCallList
-from typing import List
+from typing import List, Mapping
 
 from vars import (
     API_RESPONSE_HEADERS_NAME, 
@@ -20,6 +20,9 @@ from vars import (
 
 
 class HarValidator():
+    """
+    HarValidator helps to validate HAR entry format
+    """
 
     def _is_data_valid(self) -> bool:
         """
@@ -27,12 +30,30 @@ class HarValidator():
 
         Validation uses json schema validation and as a result guarantee
         that dict fits expected structure and has all necessary fields
+
+        Returns:
+            True if data is valid or False if it's not
         """
         # TODO: implement validation
 
         return True
 
-    def _is_api_method(self, header: dict) -> bool:
+
+class HarEntryChecker():
+    """
+    Checks different HAR entries on belongings to API calls
+    """
+
+    def _is_api_method(self, header: Mapping[str, str]) -> bool:
+        """
+        Checks is HTTP request looks like an API call
+
+        Args:
+            header: Mapping[str, str] - HTTP header name and it's value
+
+        Returns:
+            True if request is API call or False if it's not
+        """
         result = False
         if (header.get(NAME).lower() == API_RESPONSE_HEADERS_NAME and
             header.get(VALUE) in API_RESPONSE_HEADERS_VALUES):
@@ -42,6 +63,15 @@ class HarValidator():
         return result
 
     def _is_entry_is_api_call(self, entry: dict) -> bool:
+        """
+        Checks is given entry looks like API call
+
+        Args:
+            entry: dict - HAR format entry
+
+        Returns:
+            True if method is API call or False if it's not
+        """
         result = False
         for header in entry.get(RESPONSE).get(HEADERS):
             if self._is_api_method(header):
@@ -51,11 +81,15 @@ class HarValidator():
 
 
 class HarEntryParserMixin():
+    """
+    HarEntryParserMixin helps to parse HAR entry
+    """
 
-    def _get_host(self, parsed_url):
+    def _get_host(self, parsed_url: str) -> str:
+        """ Parses url string to get host """
         return '.'.join(parsed_url.netloc.split('.')[-2:])
 
-    def _get_host_and_path(self, entry):
+    def _get_host_and_path(self, entry: dict):
         HostPath = namedtuple('HostPath', ['host', 'path'])
         url = entry.get(REQUEST).get(URL)
         parsed_url = urlparse(url)
@@ -63,14 +97,36 @@ class HarEntryParserMixin():
 
         return HostPath(host=host, path=parsed_url.path)
 
-    def _get_method(self, entry):
-        return entry.get(REQUEST).get(METHOD).lower()
+    def _get_method(self, entry: dict) -> str:
+        """
+        Gets http method from given dict
 
-    def _get_status(self, entry):
-        return entry.get(RESPONSE).get(STATUS) 
+        Assumes that entry already validated
+
+        Args:
+            entry: dict - HAR format entry
+
+        Returns:
+            str: http method
+        """
+        return entry.get(REQUEST, {}).get(METHOD, '').lower()
+
+    def _get_status(self, entry: dict) -> str:
+        """
+        Gets http status from given dict
+
+        Assumes that entry already validated
+
+        Args:
+            entry: dict - HAR format entry
+
+        Returns:
+            str: http status
+        """
+        return entry.get(RESPONSE, {}).get(STATUS, '')
 
 
-class HarParser(HarValidator, HarEntryParserMixin):
+class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
     """
     HarParser class helps to convert data to special ApiCallList object
 
