@@ -22,7 +22,14 @@ from vars import (
 class HarValidator():
 
     def _is_data_valid(self) -> bool:
+        """
+        Method validates that data is a valid HAR format dict
+
+        Validation uses json schema validation and as a result guarantee
+        that dict fits expected structure and has all necessary fields
+        """
         # TODO: implement validation
+
         return True
 
     def _is_api_method(self, header: dict) -> bool:
@@ -107,11 +114,25 @@ class HarParser(HarValidator, HarEntryParserMixin):
         Returns:
             ApiCallList - collection of HAR items
         """
-        ac_list = ApiCallList()
-        for item in items:
-            ac_list.append(item)
-        
-        return ac_list
+        return ApiCallList().create_from_list(items)
+
+    def _get_api_call_item_from_entry(self, idx: int, entry: dict) -> ApiCallItem:
+        if entry:
+            host_and_path = self._get_host_and_path(entry)
+            detail = ApiCallDetail(
+                method=self._get_method(entry),
+                status=self._get_status(entry)
+            )
+            api_call = ApiCallItem(
+                indices=(idx,),
+                host=host_and_path.host,
+                path=host_and_path.path,
+                details=frozenset({detail})
+            )
+        else:
+            raise ValueError
+
+        return api_call
 
     def _get_api_call_item_list(self) -> List[ApiCallItem]:
         """
@@ -126,20 +147,12 @@ class HarParser(HarValidator, HarEntryParserMixin):
         result = []
         if self._is_data_valid():
             entries = self._data.get(LOG).get(ENTRIES)
-            for i in range(len(entries)):
-                if self._is_entry_is_api_call(entries[i]):
-                    host_and_path = self._get_host_and_path(entries[i])
-                    detail = ApiCallDetail(
-                        method=self._get_method(entries[i]),
-                        status=self._get_status(entries[i])
+            for idx in range(len(entries)):
+                entry = entries[idx]
+                if self._is_entry_is_api_call(entry):
+                    result.append(
+                        self._get_api_call_item_from_entry(idx, entry)
                     )
-                    api_call = ApiCallItem(
-                        indices=(i,),
-                        host=host_and_path.host,
-                        path=host_and_path.path,
-                        details=frozenset({detail})
-                    )
-                    result.append(api_call)
         else:
             raise ValueError
 

@@ -1,4 +1,5 @@
-from typing import Tuple, Set, NoReturn
+from __future__ import annotations
+from typing import Tuple, Set, List, NoReturn
 from collections import OrderedDict
 from dataclasses import dataclass
 
@@ -29,6 +30,9 @@ class ApiCallList():
 
         return self._sequence[i] 
 
+    def __len__(self):
+        return len(self._sequence)
+
     def _set_sequence(self) -> NoReturn:
         self._sequence = [ self._data.get(k) for k in self._data ]
 
@@ -44,6 +48,12 @@ class ApiCallList():
         )
 
         return item
+
+    def create_from_list(self, items: List[ApiCallItem]) -> ApiCallList:
+        for item in items:
+            self.append(item)
+
+        return self
 
     def append(self, item: ApiCallItem) -> NoReturn:
         if isinstance(item, ApiCallItem):
