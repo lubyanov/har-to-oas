@@ -21,8 +21,7 @@ class ApiCallItem():
 class ApiCallList():
 
     def __init__(self):
-        self._sequence = []
-        self._data = OrderedDict()
+        self._create_data_containers()
 
     def __getitem__(self, i):
         if not self._sequence:
@@ -33,8 +32,12 @@ class ApiCallList():
     def __len__(self):
         return len(self._sequence)
 
+    def _create_data_containers(self) -> NoReturn:
+        self._sequence = []
+        self._data = OrderedDict()
+
     def _set_sequence(self) -> NoReturn:
-        self._sequence = [ self._data.get(k) for k in self._data ]
+        self._sequence = [self._data.get(k) for k in self._data]
 
     def _merge(self, x: ApiCallItem, y: ApiCallItem) -> ApiCallItem:
         details = set(x.details)
@@ -50,6 +53,7 @@ class ApiCallList():
         return item
 
     def create_from_list(self, items: List[ApiCallItem]) -> ApiCallList:
+        self._create_data_containers()
         for item in items:
             self.append(item)
 
