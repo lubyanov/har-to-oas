@@ -40,6 +40,29 @@ class ApiCallList():
         self._sequence = [self._data.get(k) for k in self._data]
 
     def _merge(self, x: ApiCallItem, y: ApiCallItem) -> ApiCallItem:
+        """
+        Merges two objects with same url to one and with all ApiCallDetail
+
+        Method gets two objects with same url and join object's indices into one tuple
+        and join different ApiCallDetail (different method, status) without duplicates
+
+        Args:
+            x: ApiCallItem - object to merge
+            y: ApiCallItem - another object to merge
+
+        Raises:
+            TypeError - raises if args are not ApiCallItem instances
+            ValueError - raises if objects has different urls
+
+        Returns:
+            ApiCallItem: merged object with same url and all details
+        """
+        if not isinstance(x, ApiCallItem) or not isinstance(y, ApiCallItem):
+            raise TypeError("Method accepts only ApiCallItem objects")
+
+        if x.host + x.path != y.host + y.path:
+            raise ValueError("Object's urls aren't identical")
+
         details = set(x.details)
         details.update(y.details) 
 
