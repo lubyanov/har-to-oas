@@ -80,8 +80,31 @@ def test_merge_is_raises_value_exception():
     sequence._merge(item1, item1)
 
 
+
+def test_append_raises_type_exception():
+    sequence = ApiCallList()
+    item = build_api_call_item(idx=1, details=[('get', 200)], host='host', path='path')
+
+    with raises(TypeError):
+        sequence.append(None)
+
+    sequence.append(item)
+
+
 def test_append_is_works():
-    pass
+    sequence = ApiCallList()
+    item1 = build_api_call_item(idx=1, details=[('get', 200)], host='host', path='path')
+    item2 = build_api_call_item(idx=2, details=[('post', 201)], host='host', path='path')
+    item3 = build_api_call_item(idx=3, details=[('get', 200)], host='host_', path='path')
+
+    sequence.append(item1)
+    assert len(sequence) == 1
+
+    sequence.append(item2)
+    assert len(sequence) == 1
+
+    sequence.append(item3)
+    assert len(sequence) == 2
 
 
 def test_create_from_list_is_works():

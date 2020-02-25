@@ -21,7 +21,7 @@ class ApiCallItem():
 class ApiCallList():
 
     def __init__(self):
-        self._create_data_containers()
+        self._create_data_stores()
 
     def __getitem__(self, i):
         if not self._sequence:
@@ -32,11 +32,13 @@ class ApiCallList():
     def __len__(self):
         return len(self._sequence)
 
-    def _create_data_containers(self) -> NoReturn:
+    def _create_data_stores(self) -> NoReturn:
+        """ Creates two stores for collecting data """
         self._sequence = []
         self._data = OrderedDict()
 
     def _set_sequence(self) -> NoReturn:
+        """ Convert dict items to list """
         self._sequence = [self._data.get(k) for k in self._data]
 
     def _merge(self, x: ApiCallItem, y: ApiCallItem) -> ApiCallItem:
@@ -51,8 +53,8 @@ class ApiCallList():
             y: ApiCallItem - another object to merge
 
         Raises:
-            TypeError - raises if args are not ApiCallItem instances
-            ValueError - raises if objects has different urls
+            TypeError: raises if args are not ApiCallItem instances
+            ValueError: raises if objects has different urls
 
         Returns:
             ApiCallItem: merged object with same url and all details
@@ -76,13 +78,41 @@ class ApiCallList():
         return item
 
     def create_from_list(self, items: List[ApiCallItem]) -> ApiCallList:
-        self._create_data_containers()
+        """ 
+        Create collection from given items
+
+        Methods clear stores if they are exist and append
+        items into collection according 'append' logic
+
+        Args:
+            items: List[ApiCallItem] - list of separate ApiCallItems
+
+        Returns:
+            ApiCallList: return self as a result
+        """
+        self._create_data_stores()
         for item in items:
             self.append(item)
 
         return self
 
     def append(self, item: ApiCallItem) -> NoReturn:
+        """
+        Appends item to collection
+
+        Method checks if there's other object with the same url
+        exists in collection and depends on it merge objects and
+        append to collection or just append to collection
+
+        Args:
+            item: ApiCallItem - item to append collection
+
+        Raises:
+            TypeError: raises if item if not ApiCallItem instnance
+
+        Returns:
+            None
+        """
         if isinstance(item, ApiCallItem):
             key = item.host + item.path
             if key in self._data:
