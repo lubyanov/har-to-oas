@@ -1,14 +1,14 @@
-def parse(self):
+def test_is_parse_works():
     pass
 
 
-def _get_api_call_list():
+def test_is_get_api_call_list_works():
     pass
 
 
-def _get_api_call_item_from_entry():
+def test_is_get_api_call_item_from_entry_works():
     pass
 
 
-def _get_api_call_item_list():
+def test_is_get_api_call_item_list_works():
     pass
