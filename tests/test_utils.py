@@ -2,7 +2,7 @@ from utils import build_api_call_item
 from models.api_calls import ApiCallItem, ApiCallDetail
 
 
-def test_is_build_api_call_item_returns_expected_object():
+def test_build_api_call_item_returns_expected_object():
     kwargs = {
         'idx': 1,
         'host': 'host',

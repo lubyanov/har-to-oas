@@ -1,6 +1,6 @@
-def test_is_write_works():
+def test_write_works():
     pass
     
 
-def test_is_perform_dict_works():
+def test_proccess_dict_works():
     pass
