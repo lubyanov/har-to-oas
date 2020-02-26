@@ -25,7 +25,7 @@ def test_build_api_call_item_returns_expected_object():
 
     wrong_host = ApiCallItem(
         indices=(kwargs.get('idx'),),
-        host='host_', # wrong host
+        host='host_',   # wrong host
         path=kwargs.get('path'),
         details=frozenset(details)
     )
@@ -33,12 +33,12 @@ def test_build_api_call_item_returns_expected_object():
     wrong_path = ApiCallItem(
         indices=(kwargs.get('idx'),),
         host=kwargs.get('host'),
-        path='path_', # wrong path
+        path='path_',  # wrong path
         details=frozenset(details)
     )
 
     wrong_indices = ApiCallItem(
-        indices=(2,), # wrong indices
+        indices=(2,),  # wrong indices
         host=kwargs.get('host'),
         path=kwargs.get('path'),
         details=frozenset(details)
@@ -48,19 +48,21 @@ def test_build_api_call_item_returns_expected_object():
         indices=(kwargs.get('idx'),),
         host=kwargs.get('host'),
         path=kwargs.get('path'),
-        details=frozenset([ApiCallDetail(method='get', status=201)]) # wrong detail
+        details=frozenset([ApiCallDetail(method='get', status=201)])  # wrong detail
     )
 
     wrong_details_length = ApiCallItem(
         indices=(kwargs.get('idx'),),
         host=kwargs.get('host'),
         path=kwargs.get('path'),
-        details=frozenset(details + [ApiCallDetail(method='get', status=201)]) # extra detail
+        details=frozenset(
+            details + [ApiCallDetail(method='get', status=201)]  # extra detail
+        )
     )
 
     assert built_obj == expected_obj
-    assert built_obj != wrong_host 
+    assert built_obj != wrong_host
     assert built_obj != wrong_path
-    assert built_obj != wrong_indices 
+    assert built_obj != wrong_indices
     assert built_obj != wrong_details
     assert built_obj != wrong_details_length

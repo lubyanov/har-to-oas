@@ -1,4 +1,3 @@
-import json
 from har.reader import HarReader
 from har.parser import HarParser
 from oas.writer import OasWriter
@@ -10,7 +9,7 @@ AMAZON = 'sources.local/amazon.har'
 
 
 if __name__ == '__main__':
-    
+
     har_parser = HarParser(
         HarReader().read_from_file(LS_FF)
     )

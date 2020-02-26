@@ -1,7 +1,7 @@
 from copy import deepcopy
 from models.api_calls import ApiCallList
 from oas.templates import server_template, oas_template
-from vars import PATHS, RESPONSES, CONTENT, APPLICATION_JSON, SCHEMA, OUTPUT
+from vars import PATHS, RESPONSES, CONTENT, APPLICATION_JSON, SCHEMA
 
 
 class OasProcessor():
@@ -39,4 +39,4 @@ class OasProcessor():
                 responses.append(status)
             paths[item.path].append(detail)
 
-        return oas    
+        return oas

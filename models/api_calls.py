@@ -27,7 +27,7 @@ class ApiCallList():
         if not self._sequence:
             self._set_sequence()
 
-        return self._sequence[i] 
+        return self._sequence[i]
 
     def __len__(self):
         return len(self._sequence)
@@ -45,8 +45,9 @@ class ApiCallList():
         """
         Merges two objects with same url to one and with all ApiCallDetail
 
-        Method gets two objects with same url and join object's indices into one tuple
-        and join different ApiCallDetail (different method, status) without duplicates
+        Method gets two objects with same url and join object's indices into
+        one tuple and join different ApiCallDetail (different method, status)
+        without duplicates
 
         Args:
             x: ApiCallItem - object to merge
@@ -66,7 +67,7 @@ class ApiCallList():
             raise ValueError("Object's urls aren't identical")
 
         details = set(x.details)
-        details.update(y.details) 
+        details.update(y.details)
 
         item = ApiCallItem(
             indices=x.indices + y.indices,
@@ -78,7 +79,7 @@ class ApiCallList():
         return item
 
     def create_from_list(self, items: List[ApiCallItem]) -> ApiCallList:
-        """ 
+        """
         Create collection from given items
 
         Methods clear stores if they are exist and append

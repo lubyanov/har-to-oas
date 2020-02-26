@@ -26,7 +26,7 @@ class HarReader():
         try:
             with open(path) as f:
                 result = json.load(f)
-        except:
+        except (IOError, ValueError):
             logger.critical(f'Error cause while {path!r} parsing')
 
         return result

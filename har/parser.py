@@ -4,10 +4,10 @@ from models.api_calls import ApiCallItem, ApiCallDetail, ApiCallList
 from typing import List, Mapping
 
 from vars import (
-    API_RESPONSE_HEADERS_NAME, 
-    API_RESPONSE_HEADERS_VALUES, 
+    API_RESPONSE_HEADERS_NAME,
+    API_RESPONSE_HEADERS_VALUES,
     REQUEST,
-    RESPONSE, 
+    RESPONSE,
     HEADERS,
     METHOD,
     STATUS,
@@ -56,8 +56,8 @@ class HarEntryChecker():
         """
         result = False
         if (header.get(NAME).lower() == API_RESPONSE_HEADERS_NAME and
-            header.get(VALUE) in API_RESPONSE_HEADERS_VALUES):
-            
+                header.get(VALUE) in API_RESPONSE_HEADERS_VALUES):
+
             result = True
 
         return result
@@ -162,7 +162,7 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
 
     def _get_api_call_list(self, items: List[ApiCallItem]) -> ApiCallList:
         """
-        Collects separated ApiCallItems to collection represented by ApiCallList
+        Collects separated ApiCallItems to collection presented by ApiCallList
 
         Args:
             items: list of ApiCallItems
