@@ -1,17 +1,14 @@
+import os
 from har.reader import HarReader
 from har.parser import HarParser
 from oas.writer import OasWriter
 from oas.processor import OasProcessor
 
 
-LS_FF = 'sources.local/ls-ff.har'
-AMAZON = 'sources.local/amazon.har'
-
-
 if __name__ == '__main__':
 
     har_parser = HarParser(
-        HarReader().read_from_file(LS_FF)
+        HarReader().read_from_file(os.getenv('HAR_TO_OAS_FILE_PATH'))
     )
 
     api_calls = har_parser.parse()
