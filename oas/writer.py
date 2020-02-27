@@ -1,11 +1,9 @@
-import sys
 import json
 import logging
 from typing import NoReturn
 from vars import OUTPUT
 
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 

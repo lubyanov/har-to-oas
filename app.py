@@ -1,8 +1,14 @@
 import os
+import sys
+import logging
+
 from har.reader import HarReader
 from har.parser import HarParser
 from oas.writer import OasWriter
 from oas.processor import OasProcessor
+
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 if __name__ == '__main__':
