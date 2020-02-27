@@ -69,14 +69,12 @@ class ApiCallList():
         if x.host + x.path != y.host + y.path:
             raise ValueError('Object\'s urls aren\'t identical')
 
-        item = ApiCallItem(
+        return ApiCallItem(
             indices=x.indices + y.indices,
             host=x.host,
             path=x.path,
             details=x.details | y.details
         )
-
-        return item
 
     def create_from_list(self, items: List[ApiCallItem]) -> ApiCallList:
         """

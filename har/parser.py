@@ -1,7 +1,8 @@
+from typing import List, Mapping
 from collections import namedtuple
 from urllib.parse import urlparse
+
 from models.api_calls import ApiCallItem, ApiCallDetail, ApiCallList
-from typing import List, Mapping
 
 from vars import (
     API_RESPONSE_HEADERS_NAME,
@@ -17,6 +18,9 @@ from vars import (
     HAR_LOG,
     HAR_ENTRIES
 )
+
+
+HostPath = namedtuple('HostPath', ['host', 'path'])
 
 
 class HarValidator():
@@ -87,7 +91,6 @@ class HarEntryParserMixin():
         return '.'.join(parsed_url.netloc.split('.')[-2:])
 
     def _get_host_and_path(self, entry: dict):
-        HostPath = namedtuple('HostPath', ['host', 'path'])
         url = entry.get(HAR_HTTP_REQUEST).get(HAR_URL)
         parsed_url = urlparse(url)
         host = self._get_host(parsed_url)
@@ -153,20 +156,7 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
             ApiCallList - collection of HAR items
         """
         items = self._get_api_call_item_list()
-        ac_list = self._get_api_call_list(items)
 
-        return ac_list
-
-    def _get_api_call_list(self, items: List[ApiCallItem]) -> ApiCallList:
-        """
-        Collects separated ApiCallItems to collection presented by ApiCallList
-
-        Args:
-            items: list of ApiCallItems
-
-        Returns:
-            ApiCallList - collection of HAR items
-        """
         return ApiCallList().create_from_list(items)
 
     def _get_api_call_item_from_entry(self, idx: int, entry: dict) -> ApiCallItem:
