@@ -1,6 +1,5 @@
 import json
 import logging
-from typing import NoReturn
 from vars import OUTPUT
 
 
@@ -15,13 +14,22 @@ class OasWriter():
     def __init__(self, data):
         self._data = data
 
-    def write(self) -> NoReturn:
-        """ Writes OAS data to json file """
+    def write(self) -> bool:
+        """
+        Writes OAS data to json file
+
+        Returns:
+            bool: True if everything is ok or False overwise
+        """
+        success = False
 
         try:
             with open(OUTPUT, 'w') as f:
                 f.write(
                     json.dumps(self._data, indent=4)
                 )
-        except:
-            logger.critical(f'Error cause while {OUTPUT!r} writing')
+                success = True
+        except (IOError, OSError, ValueError) as err:
+            logger.critical(f'Error cause while {OUTPUT!r} writing cause: {err}')
+
+        return success

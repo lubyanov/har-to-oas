@@ -18,13 +18,15 @@ class HarReader():
             path: str - path to json file
 
         Returns:
-            dict: HAR formatted data
+            tuple (dict, bool): HAR formatted data and status
         """
-        result = {}
+        result, success = {}, False
+
         try:
             with open(path) as f:
                 result = json.load(f)
-        except (IOError, ValueError):
-            logger.critical(f'Error cause while {path!r} parsing')
+                success = True
+        except (IOError, OSError, ValueError) as err:
+            logger.critical(f'Error cause while {path!r} parsing cause: {err}')
 
-        return result
+        return (result, success)

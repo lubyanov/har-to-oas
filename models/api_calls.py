@@ -64,10 +64,10 @@ class ApiCallList():
             ApiCallItem: merged object with same url and all details
         """
         if not isinstance(x, ApiCallItem) or not isinstance(y, ApiCallItem):
-            raise TypeError("Method accepts only ApiCallItem objects")
+            raise TypeError('Method accepts only ApiCallItem objects')
 
         if x.host + x.path != y.host + y.path:
-            raise ValueError("Object's urls aren't identical")
+            raise ValueError('Object\'s urls aren\'t identical')
 
         item = ApiCallItem(
             indices=x.indices + y.indices,
@@ -123,4 +123,4 @@ class ApiCallList():
                 self._items.append(item)
                 self._indices[key] = len(self._items) - 1
         else:
-            raise TypeError("ApiCallItem must be passed")
+            raise TypeError('ApiCallItem must be passed')

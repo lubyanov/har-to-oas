@@ -145,7 +145,7 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
             ValueError: raises if data is empty or not dict object
         """
         if not data or not isinstance(data, dict):
-            raise ValueError
+            raise ValueError('Data to parse is empty or not dict')
         self._data = data
 
     def parse(self) -> ApiCallList:
@@ -173,7 +173,7 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
         return ApiCallList().create_from_list(items)
 
     def _get_api_call_item_from_entry(self, idx: int, entry: dict) -> ApiCallItem:
-        if entry:
+        if entry and isinstance(entry, dict):
             host_and_path = self._get_host_and_path(entry)
             detail = ApiCallDetail(
                 method=self._get_method(entry),
@@ -186,7 +186,7 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
                 details=frozenset({detail})
             )
         else:
-            raise ValueError
+            raise ValueError('Entry to parse is emtpy or not dict')
 
         return api_call
 
@@ -210,6 +210,6 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
                         self._get_api_call_item_from_entry(idx, entry)
                     )
         else:
-            raise ValueError
+            raise ValueError('Invalid HAR format')
 
         return result
