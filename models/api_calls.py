@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Tuple, Set, List, NoReturn
-from collections import OrderedDict
 from dataclasses import dataclass
 
 
@@ -19,27 +18,31 @@ class ApiCallItem():
 
 
 class ApiCallList():
+    """
+    Collections of ApiCallItem
 
-    def __init__(self):
-        self._create_data_stores()
+    Allows to store objects with same key (host + path), but different details
+    (as HTTP method and status represented in ApiCallDetail) object and allows
+    to merge same objects into one appending details
+
+    Attributes:
+        _items (list): stores ApiCallItem
+        _indices (dict): pairs of ApiCallItem key and it's index in _items
+    """
+
+    _items = []
+    _indices = {}
 
     def __getitem__(self, i):
-        if not self._sequence:
-            self._set_sequence()
-
-        return self._sequence[i]
+        return self._items[i]
 
     def __len__(self):
-        return len(self._sequence)
+        return len(self._items)
 
-    def _create_data_stores(self) -> NoReturn:
-        """ Creates two stores for collecting data """
-        self._sequence = []
-        self._data = OrderedDict()
-
-    def _set_sequence(self) -> NoReturn:
-        """ Convert dict items to list """
-        self._sequence = [self._data.get(k) for k in self._data]
+    def _reset_stores(self):
+        """ Clear data in stores """
+        del self._items[:]
+        self._indices.clear()
 
     def _merge(self, x: ApiCallItem, y: ApiCallItem) -> ApiCallItem:
         """
@@ -66,14 +69,11 @@ class ApiCallList():
         if x.host + x.path != y.host + y.path:
             raise ValueError("Object's urls aren't identical")
 
-        details = set(x.details)
-        details.update(y.details)
-
         item = ApiCallItem(
             indices=x.indices + y.indices,
             host=x.host,
             path=x.path,
-            details=frozenset(details)
+            details=x.details | y.details
         )
 
         return item
@@ -82,7 +82,7 @@ class ApiCallList():
         """
         Create collection from given items
 
-        Methods clear stores if they are exist and append
+        Methods reset stores if they are exist and append
         items into collection according 'append' logic
 
         Args:
@@ -91,7 +91,7 @@ class ApiCallList():
         Returns:
             ApiCallList: return self as a result
         """
-        self._create_data_stores()
+        self._reset_stores()
         for item in items:
             self.append(item)
 
@@ -116,10 +116,11 @@ class ApiCallList():
         """
         if isinstance(item, ApiCallItem):
             key = item.host + item.path
-            if key in self._data:
-                self._data[key] = self._merge(self._data[key], item)
+            if key in self._indices:
+                stored = self._items[self._indices[key]]
+                self._items[self._indices[key]] = self._merge(stored, item)
             else:
-                self._data[key] = item
-            self._set_sequence()
+                self._items.append(item)
+                self._indices[key] = len(self._items) - 1
         else:
             raise TypeError("ApiCallItem must be passed")
