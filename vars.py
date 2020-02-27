@@ -1,42 +1,52 @@
+import os
+
+
 """
 HAR fields
 """
 
-LOG = 'log'
-URL = 'url'
-NAME = 'name'
-VALUE = 'value'
-METHOD = 'method'
-STATUS = 'status'
-REQUEST = 'request'
-HEADERS = 'headers'
-ENTRIES = 'entries'
-RESPONSE = 'response'
+HAR_LOG = 'log'
+HAR_URL = 'url'
+HAR_HEADER_NAME = 'name'
+HAR_HEADER_VALUE = 'value'
+HAR_HTTP_METHOD = 'method'
+HAR_HTTP_STATUS = 'status'
+HAR_HTTP_REQUEST = 'request'
+HAR_HEADERS = 'headers'
+HAR_ENTRIES = 'entries'
+HAR_RESPONSE = 'response'
 
 
 """
 OAS fields
 """
 
-PATHS = 'paths'
-RESPONSES = 'responses'
-CONTENT = 'content'
-SCHEMA = 'schema'
+OAS_PATHS = 'paths'
+OAS_RESPONSES = 'responses'
+OAS_CONTENT = 'content'
+OAS_SCHEMA = 'schema'
 
 
 """
 API METHODS DETECTION fields
 """
 
-CONTENT_TYPE = 'content-type'
-APPLICATION_JSON = 'application/json'
+HTTP_CONTENT_TYPE = 'content-type'
+HTTP_APPLICATION_JSON = 'application/json'
 
-API_RESPONSE_HEADERS_NAME = CONTENT_TYPE
-API_RESPONSE_HEADERS_VALUES = [APPLICATION_JSON]
+API_RESPONSE_HEADERS_NAME = HTTP_CONTENT_TYPE
+API_RESPONSE_HEADERS_VALUES = [HTTP_APPLICATION_JSON]
+
+
+"""
+READER fields
+"""
+
+HAR_TO_OAS_FILE_PATH = os.getenv('HAR_TO_OAS_FILE_PATH')
 
 
 """
 WRITER fields
 """
 
-OUTPUT = 'out.local'
+OAS_OUTPUT_FILE_PATH = os.getenv('OAS_OUTPUT_FILE_PATH', 'output.local')

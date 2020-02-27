@@ -1,7 +1,14 @@
 from copy import deepcopy
 from models.api_calls import ApiCallList
 from oas.templates import server_template, oas_template
-from vars import PATHS, RESPONSES, CONTENT, APPLICATION_JSON, SCHEMA
+
+from vars import (
+    OAS_PATHS,
+    OAS_RESPONSES,
+    OAS_CONTENT,
+    HTTP_APPLICATION_JSON,
+    OAS_SCHEMA
+)
 
 
 class OasProcessor():
@@ -20,18 +27,18 @@ class OasProcessor():
             dict: data in OAS format
         """
         oas = deepcopy(oas_template)
-        paths = oas.get(PATHS)
+        paths = oas.get(OAS_PATHS)
         for item in self._items:
             paths.setdefault(item.path, [])
             detail = {}
             for d in item.details:
                 method = detail.setdefault(d.method, {})
-                responses = method.setdefault(RESPONSES, [])
+                responses = method.setdefault(OAS_RESPONSES, [])
                 status = {
                     d.status: {
-                        CONTENT: {
-                            APPLICATION_JSON: {
-                                SCHEMA: {}
+                        OAS_CONTENT: {
+                            HTTP_APPLICATION_JSON: {
+                                OAS_SCHEMA: {}
                             }
                         }
                     }

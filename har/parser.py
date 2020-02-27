@@ -6,16 +6,16 @@ from typing import List, Mapping
 from vars import (
     API_RESPONSE_HEADERS_NAME,
     API_RESPONSE_HEADERS_VALUES,
-    REQUEST,
-    RESPONSE,
-    HEADERS,
-    METHOD,
-    STATUS,
-    URL,
-    NAME,
-    VALUE,
-    LOG,
-    ENTRIES
+    HAR_HTTP_REQUEST,
+    HAR_RESPONSE,
+    HAR_HEADERS,
+    HAR_HTTP_METHOD,
+    HAR_HTTP_STATUS,
+    HAR_URL,
+    HAR_HEADER_NAME,
+    HAR_HEADER_VALUE,
+    HAR_LOG,
+    HAR_ENTRIES
 )
 
 
@@ -54,13 +54,10 @@ class HarEntryChecker():
         Returns:
             True if request is API call or False if it's not
         """
-        result = False
-        if (header.get(NAME).lower() == API_RESPONSE_HEADERS_NAME and
-                header.get(VALUE) in API_RESPONSE_HEADERS_VALUES):
-
-            result = True
-
-        return result
+        return (
+            header.get(HAR_HEADER_NAME).lower() == API_RESPONSE_HEADERS_NAME
+            and header.get(HAR_HEADER_VALUE) in API_RESPONSE_HEADERS_VALUES
+        )
 
     def _is_entry_is_api_call(self, entry: dict) -> bool:
         """
@@ -73,7 +70,7 @@ class HarEntryChecker():
             True if method is API call or False if it's not
         """
         result = False
-        for header in entry.get(RESPONSE).get(HEADERS):
+        for header in entry.get(HAR_RESPONSE).get(HAR_HEADERS):
             if self._is_api_method(header):
                 result = True
 
@@ -91,7 +88,7 @@ class HarEntryParserMixin():
 
     def _get_host_and_path(self, entry: dict):
         HostPath = namedtuple('HostPath', ['host', 'path'])
-        url = entry.get(REQUEST).get(URL)
+        url = entry.get(HAR_HTTP_REQUEST).get(HAR_URL)
         parsed_url = urlparse(url)
         host = self._get_host(parsed_url)
 
@@ -109,7 +106,7 @@ class HarEntryParserMixin():
         Returns:
             str: http method
         """
-        return entry.get(REQUEST, {}).get(METHOD, '').lower()
+        return entry.get(HAR_HTTP_REQUEST, {}).get(HAR_HTTP_METHOD, '').lower()
 
     def _get_status(self, entry: dict) -> str:
         """
@@ -123,7 +120,7 @@ class HarEntryParserMixin():
         Returns:
             str: http status
         """
-        return entry.get(RESPONSE, {}).get(STATUS, '')
+        return entry.get(HAR_RESPONSE, {}).get(HAR_HTTP_STATUS, '')
 
 
 class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
@@ -202,9 +199,8 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
         """
         result = []
         if self._is_data_valid():
-            entries = self._data.get(LOG).get(ENTRIES)
-            for idx in range(len(entries)):
-                entry = entries[idx]
+            entries = self._data.get(HAR_LOG).get(HAR_ENTRIES)
+            for idx, entry in enumerate(entries):
                 if self._is_entry_is_api_call(entry):
                     result.append(
                         self._get_api_call_item_from_entry(idx, entry)

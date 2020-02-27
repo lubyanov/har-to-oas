@@ -1,6 +1,7 @@
 import json
 import logging
-from vars import OUTPUT
+
+from vars import OAS_OUTPUT_FILE_PATH
 
 
 logger = logging.getLogger(__name__)
@@ -24,12 +25,12 @@ class OasWriter():
         success = False
 
         try:
-            with open(OUTPUT, 'w') as f:
+            with open(OAS_OUTPUT_FILE_PATH, 'w') as f:
                 f.write(
                     json.dumps(self._data, indent=4)
                 )
                 success = True
         except (IOError, OSError, ValueError) as err:
-            logger.critical(f'Error cause while {OUTPUT!r} writing cause: {err}')
+            logger.critical(f'Error cause while {OAS_OUTPUT_FILE_PATH!r} writing cause: {err}')
 
         return success
