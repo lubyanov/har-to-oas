@@ -187,15 +187,16 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
         Returns:
             list: - list of separate ApiCallItem
         """
-        result = []
-        if self._is_data_valid():
-            entries = self._data.get(HAR_LOG).get(HAR_ENTRIES)
-            for idx, entry in enumerate(entries):
-                if self._is_entry_is_api_call(entry):
-                    result.append(
-                        self._get_api_call_item_from_entry(idx, entry)
-                    )
-        else:
+        if not self._is_data_valid():
             raise ValueError('Invalid HAR format')
+
+        result = []
+        entries = self._data.get(HAR_LOG).get(HAR_ENTRIES)
+        for idx, entry in enumerate(entries):
+            if self._is_entry_is_api_call(entry):
+                result.append(
+                    self._get_api_call_item_from_entry(idx, entry)
+                )
+            
 
         return result
