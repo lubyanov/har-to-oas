@@ -6,7 +6,7 @@ from har.parser import HarParser
 from oas.writer import OasWriter
 from oas.processor import OasProcessor
 
-from vars import HAR_TO_OAS_FILE_PATH
+from vars import HAR_TO_OAS_FILE_PATH, OAS_OUTPUT_FILE_PATH
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     oas_processor = OasProcessor(api_calls)
     oas_data = oas_processor.process_dict()
 
-    write_success = OasWriter(oas_data).write()
+    write_success = OasWriter(oas_data).write(OAS_OUTPUT_FILE_PATH)
 
     if not write_success:
         logger.error(f"Can't write result of convert")
