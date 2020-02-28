@@ -112,13 +112,13 @@ class ApiCallList():
         Returns:
             None
         """
-        if isinstance(item, ApiCallItem):
-            key = item.host + item.path
-            if key in self._indices:
-                stored = self._items[self._indices[key]]
-                self._items[self._indices[key]] = self._merge(stored, item)
-            else:
-                self._items.append(item)
-                self._indices[key] = len(self._items) - 1
-        else:
+        if not isinstance(item, ApiCallItem):
             raise TypeError('ApiCallItem must be passed')
+
+        key = item.host + item.path
+        if key in self._indices:
+            stored = self._items[self._indices[key]]
+            self._items[self._indices[key]] = self._merge(stored, item)
+        else:
+            self._items.append(item)
+            self._indices[key] = len(self._items) - 1

@@ -1,6 +1,6 @@
 from typing import List, Mapping
 from collections import namedtuple
-from urllib.parse import urlparse
+from urllib.parse import urlparse, ParseResult
 
 from models.api_calls import ApiCallItem, ApiCallDetail, ApiCallList
 
@@ -73,12 +73,11 @@ class HarEntryChecker():
         Returns:
             True if method is API call or False if it's not
         """
-        result = False
-        for header in entry.get(HAR_RESPONSE).get(HAR_HEADERS):
-            if self._is_api_method(header):
-                result = True
 
-        return result
+        return any(
+            [self._is_api_method(header) for header in
+                entry.get(HAR_RESPONSE).get(HAR_HEADERS)]
+        )
 
 
 class HarEntryParserMixin():
@@ -86,7 +85,7 @@ class HarEntryParserMixin():
     HarEntryParserMixin helps to parse HAR entry
     """
 
-    def _get_host(self, parsed_url: str) -> str:
+    def _get_host(self, parsed_url: ParseResult) -> str:
         """ Parses url string to get host """
         return '.'.join(parsed_url.netloc.split('.')[-2:])
 
@@ -160,20 +159,20 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
         return ApiCallList().create_from_list(items)
 
     def _get_api_call_item_from_entry(self, idx: int, entry: dict) -> ApiCallItem:
-        if entry and isinstance(entry, dict):
-            host_and_path = self._get_host_and_path(entry)
-            detail = ApiCallDetail(
-                method=self._get_method(entry),
-                status=self._get_status(entry)
-            )
-            api_call = ApiCallItem(
-                indices=(idx,),
-                host=host_and_path.host,
-                path=host_and_path.path,
-                details=frozenset({detail})
-            )
-        else:
+        if not entry and isinstance(entry, dict):
             raise ValueError('Entry to parse is emtpy or not dict')
+
+        host_and_path = self._get_host_and_path(entry)
+        detail = ApiCallDetail(
+            method=self._get_method(entry),
+            status=self._get_status(entry)
+        )
+        api_call = ApiCallItem(
+            indices=(idx,),
+            host=host_and_path.host,
+            path=host_and_path.path,
+            details=frozenset({detail})
+        )
 
         return api_call
 
@@ -197,6 +196,5 @@ class HarParser(HarValidator, HarEntryChecker, HarEntryParserMixin):
                 result.append(
                     self._get_api_call_item_from_entry(idx, entry)
                 )
-            
 
         return result
