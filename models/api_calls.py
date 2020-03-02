@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, Set, List, NoReturn
+from typing import Tuple, List, FrozenSet
 from dataclasses import dataclass
 
 
@@ -11,10 +11,10 @@ class ApiCallDetail():
 
 @dataclass(frozen=True)
 class ApiCallItem():
-    indices: Tuple[int]
+    indices: Tuple[int, ...]
     host: str
     path: str
-    details: Set[ApiCallDetail]
+    details: FrozenSet[ApiCallDetail]
 
 
 class ApiCallList():
@@ -29,9 +29,10 @@ class ApiCallList():
         _items (list): stores ApiCallItem
         _indices (dict): pairs of ApiCallItem key and it's index in _items
     """
-
-    _items = []
-    _indices = {}
+    
+    def __init__(self):
+        self._items = []
+        self._indices = {}
 
     def __getitem__(self, i):
         return self._items[i]
@@ -95,7 +96,7 @@ class ApiCallList():
 
         return self
 
-    def append(self, item: ApiCallItem) -> NoReturn:
+    def append(self, item: ApiCallItem) -> None:
         """
         Appends item to collection
 
